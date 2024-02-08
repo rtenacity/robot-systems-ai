@@ -10,6 +10,8 @@ from typing import Optional
 from langchain.schema import BaseOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from webui import styles
+from webui.components import loading_icon
 import shutil
 load_dotenv()
 
@@ -218,21 +220,16 @@ class ImageURL():
     def __init__(self):
         self.file_version = 0
         self.filename = "AIScene_0.mp4"
+        self.fileaddr = "/" + self.filename
     
     def update_file(self):
         self.file_version += 1
+        print(self.file_version)
         self.filename = f"AIScene_{self.file_version}.mp4"
+        self.fileaddr = "/" + self.filename
+    
         
 img = ImageURL()
-
-class FileState(rx.State):
-    filename: str
-    file_version: int = 0
-
-    def update_file(self):
-        img.update_file()
-        self.file_version += 1
-        self.filename = f"/AIScene_{self.file_version}.mp4"
 
 
 
@@ -273,7 +270,7 @@ class State(rx.State):
     
     modal_open:bool  = False
     
-    secondary:bool = False
+    url:str = ""
 
 
 
@@ -285,6 +282,11 @@ class State(rx.State):
 
         # Toggle the modal.
         self.modal_open = False
+    
+    def update_url(self, new_url:str):
+        self.url = new_url
+        
+        print(self.url)
 
     def toggle_modal(self):
         """Toggle the new chat modal."""
@@ -321,6 +323,7 @@ class State(rx.State):
         return list(self.chats.keys())
 
     async def process_question(self, form_data: dict[str, str]):
+        img.update_file()
         # Get the question from the form
         question = form_data["question"]
 
@@ -372,8 +375,6 @@ class State(rx.State):
         
         print('hello')
         
-        FileState.update_file()
-        print(img.filename)
         
         
         # while (not self.video_made):
@@ -390,22 +391,23 @@ destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
 # Define the new filename (the variable you mentioned)
 new_filename = img.filename
 
+print(img.filename)
+
 # Combine the destination directory and the new filename to get the full destination path
 destination_path = os.path.join(destination_dir, new_filename)
 
 # Move the file
 shutil.move(source_path, destination_path)
 
-img.update_file()
-
 # If the operation is successful, the file at 'source_path' will be moved to 'destination_path'
 # with the new name specified in 'new_filename'
 
 
              ''', globals(), locals())
+        
+        self.update_url(img.fileaddr)
+        
 
-
-        print(self.secondary)
             
         answer_text = add_br_tags(reason)
         
@@ -426,4 +428,118 @@ img.update_file()
 
         # Toggle the processing flag.
         self.processing = False
+
+def message(qa: QA) -> rx.Component:
+    """A single question/answer message.
+
+    Args:
+        qa: The question/answer pair.
+
+    Returns:
+        A component displaying the question/answer pair.
+    """
+    return rx.box(
+        rx.box(
+            rx.text(
+                qa.question,
+                bg=styles.border_color,
+                shadow=styles.shadow_light,
+                **styles.message_style,
+            ),
+            text_align="right",
+            margin_top="1em",
+        ),
+        rx.box(
+            rx.box(
+                rx.markdown(
+                qa.answer,
+                ),
+                rx.cond(
+                    ~State.processing,
+                        rx.video(
+                            url=State.url,
+                            width = "450px",
+                            height = "450px",
+                                
+                                ),
+
+                ),
+                bg=styles.accent_color,
+                shadow=styles.shadow_light,
+                **styles.message_style,
+                
+            ),
+            text_align="left",
+            padding_top="1em",
+        ),
+        width="100%",
+    )
+
+
+def chat() -> rx.Component:
+    """List all the messages in a single conversation."""
+    return rx.vstack(
+        rx.box(rx.foreach(State.chats[State.current_chat], message)),
+        py="8",
+        flex="1",
+        width="100%",
+        max_w="3xl",
+        padding_x="4",
+        align_self="center",
+        overflow="hidden",
+        padding_bottom="5em",
+    )
+
+
+def action_bar() -> rx.Component:
+    """The action bar to send a new message."""
+    return rx.box(
+        rx.vstack(
+            rx.form(
+                rx.form_control(
+                    rx.hstack(
+                        rx.input(
+                            placeholder="Type something...",
+                            id="question",
+                            _placeholder={"color": "#fffa"},
+                            _hover={"border_color": styles.accent_color},
+                            style=styles.input_style,
+                        ),
+                        rx.button(
+                            rx.cond(
+                                State.processing,
+                                loading_icon(height="1em"),
+                                rx.text("Send"),
+                            ),
+                            type_="submit",
+                            _hover={"bg": styles.accent_color},
+                            style=styles.input_style,
+                        ),
+                    ),
+                    is_disabled=State.processing,
+                ),
+                on_submit=State.process_question,
+                reset_on_submit=True,
+                width="100%",
+            ),
+            rx.text(
+                "",
+                font_size="xs",
+                color="#fff6",
+                text_align="center",
+            ),
+            width="100%",
+            max_w="3xl",
+            mx="auto",
+        ),
+        position="sticky",
+        bottom="0",
+        left="0",
+        py="4",
+        backdrop_filter="auto",
+        backdrop_blur="lg",
+        border_top=f"1px solid {styles.border_color}",
+        align_items="stretch",
+        width="100%",
+    )
 

@@ -2,7 +2,7 @@ import reflex as rx
 
 from webui import styles
 from webui.components import loading_icon
-from webui.state import QA, State, FileState
+from webui.state import QA, State, img
 
 
 def message(qa: QA) -> rx.Component:
@@ -33,7 +33,7 @@ def message(qa: QA) -> rx.Component:
                 rx.cond(
                     ~State.processing,
                         rx.video(
-                            url=FileState.filename,
+                            url=State.url.to_string(),
                             width = "450px",
                             height = "450px",
                                 
@@ -118,3 +118,4 @@ def action_bar() -> rx.Component:
         align_items="stretch",
         width="100%",
     )
+

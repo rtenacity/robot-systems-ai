@@ -4,8 +4,8 @@ import reflex as rx
 import os
 
 from webui import styles
-from webui.components import chat, modal, navbar, sidebar
-from webui.state import State
+from webui.components import modal, navbar, sidebar
+from webui.state import State, message, chat, action_bar
 
 def clear_filepath():
     destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
@@ -27,8 +27,8 @@ def index() -> rx.Component:
     """The main app."""
     return rx.vstack(
         navbar(),
-        chat.chat(),
-        chat.action_bar(),
+        chat(),
+        action_bar(),
         sidebar(),
         modal(),
         bg=styles.bg_dark_color,
