@@ -98,11 +98,7 @@ Then, the robot can place the item at a near coordinate:
         self.play(self.blue_bot.move_to_point((22, 25)))
         self.wait(1)
 
-Example prompt: “Pick it the item from load zone B and place it on the barrier.”
-
-Code:
-
-
+Here's an example with the blue Robot:
 
 class AIScene(RobotScene):
     def construct(self):
@@ -157,8 +153,46 @@ class AIScene(RobotScene):
         # Move the red robot back to its initial position
         self.play(self.blue_bot.move_to_point((37.5, 25)))
         self.wait(1)
+        
+
+Example prompt: 
+
+"Place an item at load zone A and move it to the barrier."
+
+Steps:
+
+1. Create an item at load zone A. 
+2. Move the blue robot to load zone A.
+3. Pick up the item at load zone A.
+4. Move closer to the barrier, but avoid crossing it.
+5. Place the item on the barrier.
+
+Here's the code to do this:
 
 
+```
+class AIScene(RobotScene):
+    def construct(self):
+        super().construct() 
+
+        item = Item(self, color=GREEN, position=(5, 25))
+        self.add(item.item)
+
+        self.play(self.blue_bot.move_to_point((5, 25)))
+        self.wait(1)
+
+        self.play(self.blue_bot.pick_up_item(item))
+        self.wait(1)
+
+        self.play(self.blue_bot.move_to_point((23, 25)))
+        self.wait(1)
+
+        self.play(self.blue_bot.place_item((25, 25)))
+        self.wait(1)
+
+        self.play(self.blue_bot.move_to_point((12.5, 25)))
+        self.wait(1)
+```
 
 The robots cannot cross the barrier. If you need to move things across the barrier, use one robot to move the item to the barrier and then the other one can pick it up and move it. Remember, the blue robot should never move to an x-coordinate greater than 23, and the blue robot should never move to an x coordinate smaller than 27. This means that the blue robot works with load zones A, B, and C and the red robot works with load zones D, E, and F. 
 
@@ -167,6 +201,7 @@ First, reason with the prompt by generating a list of steps. Then, generate code
 '''
 
 human_template = "Prompt: The blue robot cannot go to the right side of the barrier. The red robot cannot go to the left side of the barrier. An object has been loaded at load zone D, and it needs to move to load zone A. Prompt: {text}"
+
 
 model = ChatOpenAI(model = 'gpt-3.5-turbo', openai_api_key = api_key)
 
@@ -214,6 +249,8 @@ class State(rx.State):
     drawer_open: bool = False
     
     modal_open:bool  = False
+    
+    secondary:bool = False
 
 
 
@@ -309,20 +346,48 @@ class State(rx.State):
         print(exec_code)
         exec(exec_code)
         
+        print('hello')
+        
+        
+        # while (not self.video_made):
+        #     pass
+        
         exec('''
 source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
 destination_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
-destination_file = os.path.join(destination_path, os.path.basename(source_path))
 
-# Check if the destination file already exists
-if os.path.exists(destination_file):
-    # If it exists, remove it to allow the new file to be moved there
-    os.remove(destination_file)
+# Names for checking existence and determining which name to use
+file_name1 = "AIScene.mp4"
+file_name2 = "AIScene2.mp4"
 
-# Now, move the file (this will effectively be an override)
-shutil.move(source_path, destination_path)
-             ''')
+# Check which file names exist at the destination
+file_path1 = os.path.join(destination_path, file_name1)
+file_path2 = os.path.join(destination_path, file_name2)
 
+# Determine target file name and whether to delete the existing file
+if os.path.exists(file_path1):
+    os.remove(file_path1)  # Delete AIScene.mp4 if it exists
+    target_file_name = file_name2  # Prepare to use AIScene2.mp4 as the target name
+    self.secondary = True
+elif os.path.exists(file_path2):
+    os.remove(file_path2)  # Delete AIScene2.mp4 if it exists
+    target_file_name = file_name1  # Default to AIScene.mp4 as the target name
+    self.secondary = False
+else:
+    # If neither exists, default to using AIScene.mp4 as the target name
+    target_file_name = file_name1
+    self.secondary = False
+
+# Full path for the target file
+destination_file = os.path.join(destination_path, target_file_name)
+
+# Move the file to the destination with the new target filename
+shutil.move(source_path, destination_file)
+             ''', globals(), locals())
+
+
+        print(self.secondary)
+            
         answer_text = add_br_tags(reason)
         
         self.chats[self.current_chat][-1].answer += answer_text
