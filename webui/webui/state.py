@@ -302,6 +302,26 @@ class State(rx.State):
         print((parsed))
         
         reason, code, garbage = parsed 
+        
+        exec_code = code.replace("python", "")
+
+        exec_code = "config.output_dir = 'assets'\n" +  exec_code + "\nAIScene2 = AIScene() \nAIScene2.render()"
+        print(exec_code)
+        exec(exec_code)
+        
+        exec('''
+source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
+destination_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
+destination_file = os.path.join(destination_path, os.path.basename(source_path))
+
+# Check if the destination file already exists
+if os.path.exists(destination_file):
+    # If it exists, remove it to allow the new file to be moved there
+    os.remove(destination_file)
+
+# Now, move the file (this will effectively be an override)
+shutil.move(source_path, destination_path)
+             ''')
 
         answer_text = add_br_tags(reason)
         
@@ -318,18 +338,7 @@ class State(rx.State):
         
         self.chats[self.current_chat][-1].answer += answer_text
         self.chats = self.chats
-        exec_code = code.replace("python", "")
 
-        exec_code = "config.output_dir = 'assets'\n" +  exec_code + "\nAIScene2 = AIScene() \nAIScene2.render()"
-        print(exec_code)
-        exec(exec_code)
-        
-        exec('''
-source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
-destination_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
-
-shutil.move(source_path, destination_path)
-             ''')
 
         # Toggle the processing flag.
         self.processing = False

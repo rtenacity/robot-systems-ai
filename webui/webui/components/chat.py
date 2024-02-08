@@ -32,7 +32,13 @@ def message(qa: QA) -> rx.Component:
                 ),
                 rx.cond(
                     ~State.processing,
-                    rx.video(url="/AIScene.mp4"),
+                    rx.video(
+                        url="/AIScene.mp4",
+                        width = "400px",
+                        height = "400px",
+                             
+                             ),
+
                 ),
                 bg=styles.accent_color,
                 shadow=styles.shadow_light,
