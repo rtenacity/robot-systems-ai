@@ -162,11 +162,5 @@ class AIScene(RobotScene):
         self.play(self.blue_bot.place_item((5, 40)))
         self.wait(1)
 
-
-
-
-
-
-
-AIScene2 = AIScene()
-AIScene2.render()
+# AIScene2 = AIScene()
+# AIScene2.render()

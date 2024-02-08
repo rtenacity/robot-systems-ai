@@ -126,7 +126,7 @@ class AIScene(RobotScene):
 
 The robots cannot cross the barrier. If you need to move things across the barrier, use one robot to move the item to the barrier and then the other one can pick it up and move it. Remember, the blue robot should never move to an x-coordinate greater than 23, and the blue robot should never move to an x coordinate smaller than 27. This means that the blue robot works with load zones A, B, and C and the red robot works with load zones D, E, and F. 
 
-First, reason with the prompt by generating a list of steps. Then, generate code.
+First, reason with the prompt by generating a list of steps. Then, generate code. Make sure to use the format: ``` to begin the code and ``` to end it
 
 Prompt: The blue robot cannot go to the right side of the barrier. The red robot cannot go to the left side of the barrier. An object has been loaded at load zone D, and it needs to move to load zone A.
 
