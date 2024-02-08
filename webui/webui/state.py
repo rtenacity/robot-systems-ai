@@ -212,6 +212,13 @@ class QA(rx.Base):
     question: str
     answer: str
 
+class FileState(rx.State):
+    filename: str = "/AIScene_{self.file_version}.mp4"
+    file_version: int = 0
+
+    def update_file(self):
+        self.file_version += 1
+        self.filename = f"/AIScene_{self.file_version}.mp4"
 
 DEFAULT_CHATS = {
     "Demo": [],
@@ -353,36 +360,28 @@ class State(rx.State):
         #     pass
         
         exec('''
+
+# Define your source path
 source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
-destination_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
 
-# Names for checking existence and determining which name to use
-file_name1 = "AIScene.mp4"
-file_name2 = "AIScene2.mp4"
+# Define your destination directory
+destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
 
-# Check which file names exist at the destination
-file_path1 = os.path.join(destination_path, file_name1)
-file_path2 = os.path.join(destination_path, file_name2)
+# Define the new filename (the variable you mentioned)
+new_filename = FileState.filename
 
-# Determine target file name and whether to delete the existing file
-if os.path.exists(file_path1):
-    os.remove(file_path1)  # Delete AIScene.mp4 if it exists
-    target_file_name = file_name2  # Prepare to use AIScene2.mp4 as the target name
-    self.secondary = True
-elif os.path.exists(file_path2):
-    os.remove(file_path2)  # Delete AIScene2.mp4 if it exists
-    target_file_name = file_name1  # Default to AIScene.mp4 as the target name
-    self.secondary = False
-else:
-    # If neither exists, default to using AIScene.mp4 as the target name
-    target_file_name = file_name1
-    self.secondary = False
+# Combine the destination directory and the new filename to get the full destination path
+destination_path = os.path.join(destination_dir, new_filename)
 
-# Full path for the target file
-destination_file = os.path.join(destination_path, target_file_name)
+# Move the file
+shutil.move(source_path, destination_path)
 
-# Move the file to the destination with the new target filename
-shutil.move(source_path, destination_file)
+FileState.update_file()
+
+# If the operation is successful, the file at 'source_path' will be moved to 'destination_path'
+# with the new name specified in 'new_filename'
+
+
              ''', globals(), locals())
 
 

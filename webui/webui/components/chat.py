@@ -2,7 +2,7 @@ import reflex as rx
 
 from webui import styles
 from webui.components import loading_icon
-from webui.state import QA, State
+from webui.state import QA, State, FileState
 
 
 def message(qa: QA) -> rx.Component:
@@ -32,24 +32,12 @@ def message(qa: QA) -> rx.Component:
                 ),
                 rx.cond(
                     ~State.processing,
-                    rx.cond(
-                        ~State.secondary,
                         rx.video(
-                            url="/AIScene.mp4",
+                            url=FileState.filename,
                             width = "450px",
                             height = "450px",
                                 
                                 ),
-                    ),
-                    rx.cond(
-                        State.secondary,
-                        rx.video(
-                            url="/AIScene2.mp4",
-                            width = "450px",
-                            height = "450px",
-                                
-                                ),
-                    )
 
                 ),
                 bg=styles.accent_color,
