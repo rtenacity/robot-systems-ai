@@ -23,6 +23,7 @@ class CodeParser(BaseOutputParser):
         return text.strip().split("```")
     
     
+    
 def format_history(chats):
     formatted_messages = []
     for chat in chats:
@@ -211,14 +212,29 @@ class QA(rx.Base):
 
     question: str
     answer: str
+    
+class ImageURL():
+    
+    def __init__(self):
+        self.file_version = 0
+        self.filename = "AIScene_0.mp4"
+    
+    def update_file(self):
+        self.file_version += 1
+        self.filename = f"AIScene_{self.file_version}.mp4"
+        
+img = ImageURL()
 
 class FileState(rx.State):
-    filename: str = "/AIScene_{self.file_version}.mp4"
+    filename: str
     file_version: int = 0
 
     def update_file(self):
+        img.update_file()
         self.file_version += 1
         self.filename = f"/AIScene_{self.file_version}.mp4"
+
+
 
 DEFAULT_CHATS = {
     "Demo": [],
@@ -345,7 +361,8 @@ class State(rx.State):
         
         print((parsed))
         
-        reason, code, garbage = parsed 
+        reason = parsed[0]
+        code = parsed[1]
         
         exec_code = code.replace("python", "")
 
@@ -354,6 +371,9 @@ class State(rx.State):
         exec(exec_code)
         
         print('hello')
+        
+        FileState.update_file()
+        print(img.filename)
         
         
         # while (not self.video_made):
@@ -368,7 +388,7 @@ source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/192
 destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
 
 # Define the new filename (the variable you mentioned)
-new_filename = FileState.filename
+new_filename = img.filename
 
 # Combine the destination directory and the new filename to get the full destination path
 destination_path = os.path.join(destination_dir, new_filename)
@@ -376,7 +396,7 @@ destination_path = os.path.join(destination_dir, new_filename)
 # Move the file
 shutil.move(source_path, destination_path)
 
-FileState.update_file()
+img.update_file()
 
 # If the operation is successful, the file at 'source_path' will be moved to 'destination_path'
 # with the new name specified in 'new_filename'
