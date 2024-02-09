@@ -163,7 +163,7 @@ Example prompt:
 
 "Place an item at load zone A and move it to the barrier."
 
-Steps:
+To place an item at load zone A and move it to the barrier, we can do the following:
 
 1. Create an item at load zone A. 
 2. Move the blue robot to load zone A.
@@ -200,7 +200,7 @@ class AIScene(RobotScene):
 
 The robots cannot cross the barrier. If you need to move things across the barrier, use one robot to move the item to the barrier and then the other one can pick it up and move it. Remember, the blue robot should never move to an x-coordinate greater than 23, and the blue robot should never move to an x coordinate smaller than 27. This means that the blue robot works with load zones A, B, and C and the red robot works with load zones D, E, and F. 
 
-First, reason with the prompt by generating a list of steps. Then, generate code. Make sure to use the format: ``` to begin the class and ``` to end it. Remember, if you need to move objects on the grid, you need to create them first. 
+First, reason with the prompt by generating a list of steps. Be sure to restate the prompt. Then, generate code. Make sure to use the format: ``` to begin the class and ``` to end it. Remember, if you need to move objects on the grid, you need to create them first. 
 
 '''
 
@@ -381,34 +381,20 @@ class State(rx.State):
         # while (not self.video_made):
         #     pass
         
-        exec('''
+        # Define your source path
+        source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
 
-# Define your source path
-source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
-
-# Define your destination directory
-destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
-
-# Define the new filename (the variable you mentioned)
-
-img.update_file()
-new_filename = img.filename
-
-print(img.filename)
-
-# Combine the destination directory and the new filename to get the full destination path
-destination_path = os.path.join(destination_dir, new_filename)
-
-# Move the file
-shutil.move(source_path, destination_path)
-
-# If the operation is successful, the file at 'source_path' will be moved to 'destination_path'
-# with the new name specified in 'new_filename'
-
-
-             ''', globals(), locals())
+        # Define your destination directory
+        destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
         
+        img.update_file()
+        img.update_file()
 
+        print(img.filename)
+
+        destination_path = os.path.join(destination_dir, img.filename)
+
+        shutil.move(source_path, destination_path)
             
         answer_text = add_br_tags(reason)
         
@@ -421,18 +407,12 @@ shutil.move(source_path, destination_path)
 ```
 """     
 
-        #print(self.chats[self.current_chat])
         
         self.chats[self.current_chat][-1].answer += answer_text
         self.chats = self.chats
-
-        self.update_url(img.fileaddr)
         
         time.sleep(5)
-        # Toggle the processing flag.
         self.processing = False
-        
-        
         
         self.update_url(img.fileaddr)
 
