@@ -49,7 +49,6 @@ class ImageURL():
     
     def update_file(self):
         self.file_version += 1
-        print(self.file_version)
         self.filename = f"AIScene_{self.file_version}.mp4"
         self.fileaddr = "/" + self.filename
     
@@ -105,8 +104,6 @@ class State(rx.State):
     
     def update_url(self, new_url:str):
         self.url = new_url
-        
-        print(self.url)
 
     def toggle_modal(self):
         """Toggle the new chat modal."""
@@ -182,7 +179,6 @@ class State(rx.State):
         
         parsed = CodeParser().parse(result.content)
         
-        print((parsed))
         
         reason = parsed[0]
         code = parsed[1]
@@ -190,16 +186,12 @@ class State(rx.State):
         exec_code = code.replace("python", "")
 
         exec_code = "config.output_dir = 'assets'\n" +  exec_code + "\nAIScene2 = AIScene() \nAIScene2.render()"
-        print(exec_code)
         exec(exec_code)
-        
-        print('hello')
+    
         
         source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
 
         destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
-
-        print(img.filename)
 
         destination_path = os.path.join(destination_dir, img.filename)
 
