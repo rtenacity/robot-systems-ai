@@ -28,7 +28,7 @@ def index() -> rx.Component:
         chat.action_bar(),
         sidebar(),
         modal(),
-        bg=styles.bg_dark_color,
+        bg=styles.bg_medium_color,
         color=styles.text_light_color,
         min_h="100vh",
         align_items="stretch",
