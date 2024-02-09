@@ -1,9 +1,7 @@
 import reflex as rx
-
 from webui import styles
 from webui.components import loading_icon
-from webui.state import QA, State, img
-
+from webui.state import State, QA
 
 def message(qa: QA) -> rx.Component:
     """A single question/answer message.
@@ -33,7 +31,7 @@ def message(qa: QA) -> rx.Component:
                 rx.cond(
                     ~State.processing,
                         rx.video(
-                            url=State.url.to_string(),
+                            url=State.url,
                             width = "450px",
                             height = "450px",
                                 
@@ -118,4 +116,3 @@ def action_bar() -> rx.Component:
         align_items="stretch",
         width="100%",
     )
-

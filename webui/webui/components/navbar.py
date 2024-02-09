@@ -26,7 +26,7 @@ def navbar():
                 ),
                 rx.breadcrumb(
                     rx.breadcrumb_item(
-                        rx.heading("RobotAI", size="sm"),
+                        rx.heading("SystemsAI", size="sm"),
                     ),
                     rx.breadcrumb_item(
                         rx.text(State.current_chat, size="sm", font_weight="normal"),
