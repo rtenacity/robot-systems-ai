@@ -21,8 +21,6 @@ class CodeParser(BaseOutputParser):
     def parse(self, text: str):
         return text.strip().split("```")
     
-    
-    
 def format_history(chats):
     formatted_messages = []
     for chat in chats:
@@ -31,14 +29,10 @@ def format_history(chats):
         formatted_messages.extend((question, answer))
     return formatted_messages
 
-
-
 human_template = "Prompt: The blue robot cannot go to the right side of the barrier. The red robot cannot go to the left side of the barrier. An object has been loaded at load zone D, and it needs to move to load zone A. Prompt: {text}"
-
 
 template = temp.return_template()
 model = ChatOpenAI(model = 'gpt-3.5-turbo', openai_api_key = api_key)
-
 
 class QA(rx.Base):
     """A question and answer pair."""
@@ -62,8 +56,6 @@ class ImageURL():
         
 img = ImageURL()
 
-
-
 DEFAULT_CHATS = {
     "Demo": [],
 }
@@ -75,7 +67,6 @@ def add_br_tags(input_string):
     lines_with_br = [line + "<br>" for line in lines]
 
     return '\n'.join(lines_with_br)
-
 
 
 class State(rx.State):
@@ -102,8 +93,6 @@ class State(rx.State):
     modal_open:bool  = False
     
     url:str = ""
-
-
 
     def create_chat(self):
         """Create a new chat."""
@@ -206,19 +195,9 @@ class State(rx.State):
         
         print('hello')
         
-        
-        
-        # while (not self.video_made):
-        #     pass
-        
-        # Define your source path
         source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/1920p60/AIScene.mp4"
 
-        # Define your destination directory
         destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
-        
-        img.update_file()
-        img.update_file()
 
         print(img.filename)
 
