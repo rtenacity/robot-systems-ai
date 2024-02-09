@@ -20,6 +20,7 @@ def clear_filepath():
 
 @rx.page(title="SystemsAI")
 def index() -> rx.Component:
+    clear_filepath()
     """The main app."""
     return rx.vstack(
         navbar(),
