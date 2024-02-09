@@ -13,6 +13,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from webui import styles
 from webui.components import loading_icon
 import shutil
+import time
 load_dotenv()
 
 from webui.grid_scene import *
@@ -389,6 +390,8 @@ source_path = "/Users/rohanarni/Projects/robot-systems-ai/webui/media/videos/192
 destination_dir = "/Users/rohanarni/Projects/robot-systems-ai/webui/assets/"
 
 # Define the new filename (the variable you mentioned)
+
+img.update_file()
 new_filename = img.filename
 
 print(img.filename)
@@ -404,8 +407,6 @@ shutil.move(source_path, destination_path)
 
 
              ''', globals(), locals())
-        
-        self.update_url(img.fileaddr)
         
 
             
@@ -425,9 +426,15 @@ shutil.move(source_path, destination_path)
         self.chats[self.current_chat][-1].answer += answer_text
         self.chats = self.chats
 
-
+        self.update_url(img.fileaddr)
+        
+        time.sleep(5)
         # Toggle the processing flag.
         self.processing = False
+        
+        
+        
+        self.update_url(img.fileaddr)
 
 def message(qa: QA) -> rx.Component:
     """A single question/answer message.
