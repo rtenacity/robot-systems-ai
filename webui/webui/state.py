@@ -91,6 +91,10 @@ class State(rx.State):
     
     modal_open:bool  = False
     
+    url_index:int = 0
+    
+    url_list:list = []
+    
     url:str = ""
 
     def create_chat(self):
@@ -103,6 +107,8 @@ class State(rx.State):
         self.modal_open = False
     
     def update_url(self, new_url:str):
+        self.url_list.append(new_url)
+        self.url_index+=1
         self.url = new_url
 
     def toggle_modal(self):
